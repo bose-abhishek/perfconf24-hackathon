@@ -6,7 +6,6 @@ import os
 from langchain_community.vectorstores.chroma import Chroma
 from langchain.embeddings.sentence_transformer import SentenceTransformerEmbeddings
 from langchain.prompts import ChatPromptTemplate
-from langchain.chains import VectorDBQA
 
 # Disable SSL verification
 urllib3.disable_warnings()
@@ -38,7 +37,6 @@ Answer the question based on the above context: {question}
 embedding_function = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
 
 db = Chroma(persist_directory=CHROMA_PATH, embedding_function=embedding_function)
-qa = VectorDBQA.from_chain_type(llm=OpenAI(), chain_type="stuff", vectorstore=db)
 
 #query = "what is PG autoscaling?"
 query = input("Enter your query to search: ")
