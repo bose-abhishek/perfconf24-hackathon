@@ -10,7 +10,7 @@ from langchain_community.llms import HuggingFaceEndpoint
 #from langchain.chains.question_answering import load_qa_chain
 
 
-os.environ["HUGGINGFACEHUB_API_TOKEN"] = "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"
+os.environ["HUGGINGFACEHUB_API_TOKEN"] = "xxxx"
 # Disable SSL verification
 urllib3.disable_warnings()
 
