@@ -204,12 +204,9 @@ rsa==4.9
 safetensors==0.4.2
 scikit-learn==1.4.1.post1
 SciPy==1.11.1
-selinux @ file:///builddir/build/BUILD/libselinux-3.5/src
 sentence-transformers==2.5.1
-sepolicy @ file:///builddir/build/BUILD/selinux-3.5/python/sepolicy
 setools==4.4.3
 setproctitle==1.2.3
-setroubleshoot @ file:///builddir/build/BUILD/setroubleshoot-3.3.32/src
 setuptools==67.7.2
 simpleaudio==1.0.4
 simpleline==1.9.0
