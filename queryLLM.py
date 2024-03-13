@@ -5,9 +5,6 @@ from langchain.prompts import ChatPromptTemplate
 from configparser import ConfigParser
 import os
 
-import warnings
-warnings.filterwarnings("ignore", category=DeprecationWarning)
-
 import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
@@ -52,7 +49,7 @@ def main():
 
     embeddings = HuggingFaceEmbeddings(model_name='sentence-transformers/all-MiniLM-L6-v2')
     docsearch=PC.from_existing_index(index_name, embeddings)
-    docs=docsearch.similarity_search(query, k=2)
+    docs=docsearch.similarity_search(query, k=10)
 
     prompt_template = ChatPromptTemplate.from_template(PROMPT_TEMPLATE)
     prompt_RAG = prompt_template.format(context=docs, question=query)
@@ -68,7 +65,7 @@ def main():
         temperature=0.9,
         repetition_penalty=1.03,
     )
-    response = llm.predict(prompt)
+    response = llm.invoke(prompt)
     print(response)
 
 
