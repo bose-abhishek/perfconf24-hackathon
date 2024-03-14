@@ -51,8 +51,8 @@ def main ():
     HUGGINGFACEHUB_API_TOKEN = settings.get('settings', 'HUGGINGFACEHUB_API_TOKEN')
     PINECONE_API_KEY = settings.get('settings', 'PINECONE_API_KEY')
     index_name = settings.get('settings', 'index_name')
-    os.environ["OPENAI_API_KEY"] = "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"
-    os.environ["HUGGINGFACEHUB_API_TOKEN"] = "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"
+    os.environ["OPENAI_API_KEY"] = "xxxxx"
+    os.environ["HUGGINGFACEHUB_API_TOKEN"] = "xxxx"
     docs= []
     f = open(file_path)
     xls_dicts = XLSDictReader(f)
