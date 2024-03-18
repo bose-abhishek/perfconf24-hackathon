@@ -1,5 +1,5 @@
 from langchain_community.embeddings import HuggingFaceEmbeddings
-from langchain_community.vectorstores import Pinecone as PC
+from langchain_community.vectorstores import Chroma
 from langchain_community.llms import HuggingFaceEndpoint
 from langchain.prompts import ChatPromptTemplate
 from configparser import ConfigParser
@@ -9,7 +9,7 @@ import os
 import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-
+CHROMA_PATH = "chroma"
 def format_llama_prompt(user_prompt):
     prompt = """\
 <s>[INST] <<SYS>>
@@ -41,21 +41,17 @@ def readConfig():
 def main():
     settings = readConfig()
     HUGGINGFACEHUB_API_TOKEN = settings.get('settings', 'HUGGINGFACEHUB_API_TOKEN')
-    PINECONE_API_KEY = settings.get('settings', 'PINECONE_API_KEY')
-    index_name = settings.get('settings', 'index_name')
     INFERENCE_URL = settings.get('settings', 'INFERENCE_URL')
     left_co, cent_co,last_co = st.columns(3)
     with cent_co:
         st.image('llama_drama.png')
     query = st.text_input("prompt", value="", key="prompt")
     if query!= "":
-        #query = input("Enter your query to search: ")
         os.environ["HUGGINGFACEHUB_API_TOKEN"] = HUGGINGFACEHUB_API_TOKEN
-        os.environ['PINECONE_API_KEY'] = PINECONE_API_KEY
 
         embeddings = HuggingFaceEmbeddings(model_name='sentence-transformers/all-MiniLM-L6-v2')
-        docsearch=PC.from_existing_index(index_name, embeddings)
-        docs=docsearch.similarity_search(query, k=10)
+        docsearch= Chroma(persist_directory=CHROMA_PATH, embedding_function=embeddings)
+        docs=docsearch.similarity_search(query, k=5)
 
         prompt_template = ChatPromptTemplate.from_template(PROMPT_TEMPLATE)
         prompt_RAG = prompt_template.format(context=docs, question=query)
@@ -72,9 +68,7 @@ def main():
             repetition_penalty=1.03,
         )
         response = llm.invoke(prompt)
-        #print(response)
         st.markdown(response)
-
 
 if __name__ == "__main__":
     main()

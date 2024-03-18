@@ -2,7 +2,7 @@ from langchain.docstore.document import Document
 from langchain.text_splitter import CharacterTextSplitter
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from configparser import ConfigParser
-from langchain_community.vectorstores import Pinecone as PC
+from langchain_community.vectorstores import Chroma
 
 
 import xlrd, mmap, os
@@ -10,6 +10,8 @@ import xlrd, mmap, os
 # Define the columns we want to embed vs which ones we want in metadata
 columns_to_embed = ["Product","Version","Case Number","Case Owner","Problem Statement","Original Description", "Account Number","Account Name"]
 columns_to_metadata = ["Product","Version","Case Number","Case Owner","Problem Statement","Original Description", "Account Number","Account Name"]
+
+CHROMA_PATH = "chroma"
 
 def format_llama_prompt(user_prompt):
     prompt = """\
@@ -49,10 +51,6 @@ def main ():
     settings = readConfig()
     file_path = settings.get('settings', 'file_path')
     HUGGINGFACEHUB_API_TOKEN = settings.get('settings', 'HUGGINGFACEHUB_API_TOKEN')
-    PINECONE_API_KEY = settings.get('settings', 'PINECONE_API_KEY')
-    index_name = settings.get('settings', 'index_name')
-    os.environ["OPENAI_API_KEY"] = "xxxxx"
-    os.environ["HUGGINGFACEHUB_API_TOKEN"] = "xxxx"
     docs= []
     f = open(file_path)
     xls_dicts = XLSDictReader(f)
@@ -73,9 +71,9 @@ def main ():
     documents = splitter.split_documents(docs)
 
     os.environ["HUGGINGFACEHUB_API_TOKEN"] = HUGGINGFACEHUB_API_TOKEN
-    os.environ['PINECONE_API_KEY'] = PINECONE_API_KEY
     embeddings = HuggingFaceEmbeddings(model_name='sentence-transformers/all-MiniLM-L6-v2')
-    docsearch = PC.from_texts([t.page_content for t in documents], embeddings, index_name=index_name)
+    db = Chroma.from_documents(documents=documents, embedding=embeddings, persist_directory=CHROMA_PATH, collection_metadata={"hnsw:space": "cosine"})
+    db.persist()
 
 
 if __name__ == "__main__":
